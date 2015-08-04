@@ -4,6 +4,8 @@ import datetime
 from urllib.request import urlopen
 from bs4 import BeautifulSoup
 
+f = open('playLists.txt')
+
 def getPage(channelId):
   rawHtml = ("https://www.youtube.com/"+channelId)
   html = urlopen("https://www.youtube.com/"+channelId)
@@ -29,14 +31,17 @@ def getLinks(videoId):
   views = bsObj.find("div", {"class": "watch-view-count"}).get_text()
   return title, views
 
-userInput = input("Paste in Channel or Playlist string ->")
-csvFile = open("test.csv", 'wt')
-pageUrl = getPage(userInput)[0]
+#userInput = input("Paste in Channel or Playlist string ->")
+csvFile = open(datetime.datetime.now().strftime('%Y-%m-%d')+"Win10YT.csv", 'wt')
 writer = csv.writer(csvFile)
-if 'playlist' in pageUrl:
-  vidIds = playListSniff(getPage(userInput)[1])
-  writer.writerow((getPage(userInput)[2], 'Subscribers: '+getPage(userInput)[3].get_text()))
-  for vidId in vidIds:
-    writer.writerow((getLinks(vidId)))
+
+for line in f:
+  pageUrl = getPage(line)[0]
+  if 'playlist' in pageUrl:
+    vidIds = playListSniff(getPage(line)[1])
+    writer.writerow((getPage(line)[2], 'Subscribers: '+getPage(line)[3].get_text()))
+    for vidId in vidIds:
+      writer.writerow((getLinks(vidId)))
+
 
 csvFile.close()
