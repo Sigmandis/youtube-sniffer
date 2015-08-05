@@ -67,8 +67,8 @@ for line in f:
       writer.writerow((getLinks(vidId)))
 chinaList = 'chinalist.txt'
 china = chinaYouku(chinaList)
-for video in china:
-  writer.writerow(('China', chinaYouku(chinaList)[0], chinaYouku(chinaList)[1]))
+
+writer.writerow(('China', chinaYouku(chinaList)[0], chinaYouku(chinaList)[1]))
 
 csvFile.close()
 
