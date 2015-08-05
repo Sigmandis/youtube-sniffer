@@ -31,6 +31,29 @@ def getLinks(videoId):
   views = bsObj.find("div", {"class": "watch-view-count"}).get_text()
   return title, views
 
+def chinaYouku(list):
+  t = open(list)
+  for line in t:
+    html = urlopen(line)
+    bsObj = BeautifulSoup(html, 'lxml')
+    videoTitles = bsObj.findAll('li', {'class':'v_title'})
+    videoTitle = []
+    for video in videoTitles:
+      videoTitle.append(video.get_text())
+    videoViews = bsObj.findAll('li', {'class':'v_stat'})
+    videoView = []
+    for video in videoViews:
+      videoView.append(video.get_text())
+    #channel = bsObj.find('div', {'class':'name'})
+    #channel = channel.get_text()
+    #channelUrl = bsObj.find('div', {'class':'name'}).a
+    #channelUrl = channelUrl.attrs['href']
+    #html2 = urlopen(channelUrl)
+    #bsObj2 = BeautifulSoup(html2)
+    #channelSubs = bsObj2.find('',{'class':'snum'})
+    #channelSubs = channelSubs.em.get_text()
+    return videoTitle, videoView
+
 #userInput = input("Paste in Channel or Playlist string ->")
 csvFile = open(datetime.datetime.now().strftime('%Y-%m-%d')+"Win10YT.csv", 'wt')
 writer = csv.writer(csvFile)
@@ -42,6 +65,10 @@ for line in f:
     writer.writerow((getPage(line)[2], 'Subscribers: '+getPage(line)[3].get_text()))
     for vidId in vidIds:
       writer.writerow((getLinks(vidId)))
-
+chinaList = 'chinalist.txt'
+china = chinaYouku(chinaList)
+for video in china:
+  writer.writerow(('China', chinaYouku(chinaList)[0], chinaYouku(chinaList)[1]))
 
 csvFile.close()
+
