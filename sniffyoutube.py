@@ -1,3 +1,5 @@
+#! /usr/bin/python3
+
 import csv
 import datetime
 
@@ -15,8 +17,9 @@ def getPage(channelId):
   print(subscribers.get_text())
   return rawHtml, bsObj, channelName, subscribers
 
+
 def playListSniff(bsObj):
-  vidIdSniff = bsObj.find("table", {"id": "pl-video-table"})
+  vidIdSniff = bsObj.find("", {"id": "pl-video-table"})
   vidId = vidIdSniff.findAll('tr')
   vidIds = []
   for vidId in vidId:
@@ -24,23 +27,25 @@ def playListSniff(bsObj):
   print(vidIds)
   return vidIds
 
+
 def getLinks(videoId):
   html = urlopen("https://www.youtube.com/watch?v="+videoId)
   bsObj = BeautifulSoup(html, "lxml")
-  title =bsObj.find("span", {"id": "eow-title"}).get_text()
-  views = bsObj.find("div", {"class": "watch-view-count"}).get_text()
+  title =bsObj.find("", {"id": "eow-title"}).get_text()
+  views = bsObj.find("", {"class": "watch-view-count"}).get_text()
   return title, views
+
 
 def chinaYouku(list):
   t = open(list)
   for line in t:
     html = urlopen(line)
     bsObj = BeautifulSoup(html, 'lxml')
-    videoTitles = bsObj.findAll('li', {'class':'v_title'})
+    videoTitles = bsObj.findAll('', {'class':'v_title'})
     videoTitle = []
     for video in videoTitles:
       videoTitle.append(video.get_text())
-    videoViews = bsObj.findAll('li', {'class':'v_stat'})
+    videoViews = bsObj.findAll('', {'class':'v_stat'})
     videoView = []
     for video in videoViews:
       videoView.append(video.get_text())
@@ -53,6 +58,26 @@ def chinaYouku(list):
     #channelSubs = bsObj2.find('',{'class':'snum'})
     #channelSubs = channelSubs.em.get_text()
     return videoTitle, videoView
+
+
+def chinaTencent(list):
+  t = open(list)
+  for line in t:
+    html = urlopen(line)
+    bsObj = BeautifulSoup(html, 'lxml')
+    title = bsObj.find('',{'class':'mod_player_title'}).get_text()
+    views = bsObj.find('',{'class':'played_count'}).find('',{'class':'num'}).get_text()
+    return title, views
+
+
+def chinaSina(list):
+  t = open(list)
+  for line in t:
+    html = urlopen(line)
+    bsObj = BeautifulSoup(html, 'lxml')
+    title = 
+    views =
+    return title, views
 
 #userInput = input("Paste in Channel or Playlist string ->")
 csvFile = open(datetime.datetime.now().strftime('%Y-%m-%d')+"Win10YT.csv", 'wt')
@@ -71,4 +96,3 @@ china = chinaYouku(chinaList)
 writer.writerow(('China', chinaYouku(chinaList)[0], chinaYouku(chinaList)[1]))
 
 csvFile.close()
-
