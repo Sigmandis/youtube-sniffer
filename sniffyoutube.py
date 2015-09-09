@@ -2,6 +2,7 @@
 
 import csv
 import datetime
+import time
 
 from urllib.request import urlopen
 from bs4 import BeautifulSoup
@@ -60,24 +61,25 @@ def chinaYouku(list):
     return videoTitle, videoView
 
 
-def chinaTencent(list):
-  t = open(list)
-  for line in t:
-    html = urlopen(line)
-    bsObj = BeautifulSoup(html, 'lxml')
-    title = bsObj.find('',{'class':'mod_player_title'}).get_text()
-    views = bsObj.find('',{'class':'played_count'}).find('',{'class':'num'}).get_text()
-    return title, views
+def chinaTenCent(line):
+  html = urlopen(line)
+  bsObj = BeautifulSoup(html, 'lxml')
+  title = bsObj.find('',{'class':'mod_player_title'}).get_text()
+  views = bsObj.find('',{'class':'played_count'}).find('',{'class':'num'}).get_text()
+  return title, views
 
+'''
+Currently the Sina Weibo function does not work.
 
 def chinaSina(list):
   t = open(list)
   for line in t:
     html = urlopen(line)
     bsObj = BeautifulSoup(html, 'lxml')
-    title = 
+    title =
     views =
     return title, views
+'''
 
 #userInput = input("Paste in Channel or Playlist string ->")
 csvFile = open(datetime.datetime.now().strftime('%Y-%m-%d')+"Win10YT.csv", 'wt')
@@ -91,8 +93,30 @@ for line in f:
     for vidId in vidIds:
       writer.writerow((getLinks(vidId)))
 chinaList = 'chinalist.txt'
-china = chinaYouku(chinaList)
+chinaTenCents = open('chinaTenCent.txt')
+china1 = chinaYouku(chinaList)[0]
+china2 = chinaYouku(chinaList)[1]
 
-writer.writerow(('China', chinaYouku(chinaList)[0], chinaYouku(chinaList)[1]))
+writer.writerow(('China Youku', ':'))
+counter = 0
+for video in china1:
+  writer.writerow((video, china2[counter]))
+  counter += 1
+writer.writerow(('China TenCent', ':'))
+for line in chinaTenCents:
+  try:
+    result = chinaTenCent(line)
+  except ConnectionResetError:
+    try:
+      result = chinaTenCent(line)
+    except ConnectionResetError:
+      print('They sank us')
+    else:
+      continue
+  else:
+    continue
+  writer.writerow((result))
+  time.sleep(10)
 
 csvFile.close()
+chinaTenCents.close()
