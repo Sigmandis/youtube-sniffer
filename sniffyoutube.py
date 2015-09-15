@@ -7,7 +7,7 @@ import time
 from urllib.request import urlopen
 from bs4 import BeautifulSoup
 
-f = open('playLists.txt')
+
 
 def getPage(channelId):
   rawHtml = ("https://www.youtube.com/"+channelId)
@@ -81,32 +81,37 @@ def chinaSina(list):
     return title, views
 '''
 
-#userInput = input("Paste in Channel or Playlist string ->")
-csvFile = open(datetime.datetime.now().strftime('%Y-%m-%d')+"Win10YT.csv", 'wt')
-writer = csv.writer(csvFile)
+def main():
+  f = open('playLists.txt')
+  #userInput = input("Paste in Channel or Playlist string ->")
+  csvFile = open(datetime.datetime.now().strftime('%Y-%m-%d')+"Win10YT.csv", 'wt')
+  writer = csv.writer(csvFile)
 
-for line in f:
-  pageUrl = getPage(line)[0]
-  if 'playlist' in pageUrl:
-    vidIds = playListSniff(getPage(line)[1])
-    writer.writerow((getPage(line)[2], 'Subscribers: '+getPage(line)[3].get_text()))
-    for vidId in vidIds:
-      writer.writerow((getLinks(vidId)))
-chinaList = 'chinalist.txt'
-chinaTenCents = open('chinaTenCent.txt')
-china1 = chinaYouku(chinaList)[0]
-china2 = chinaYouku(chinaList)[1]
+  for line in f:
+    pageUrl = getPage(line)[0] # Should change to just line instead of calling function
+    if 'playlist' in pageUrl:
+      vidIds = playListSniff(getPage(line)[1])
+      writer.writerow((getPage(line)[2], 'Subscribers: '+getPage(line)[3].get_text()))
+      for vidId in vidIds:
+        writer.writerow((getLinks(vidId)))
+  chinaList = 'chinalist.txt'
+  chinaTenCents = open('chinaTenCent.txt')
+  china1 = chinaYouku(chinaList)[0]
+  china2 = chinaYouku(chinaList)[1]
 
-writer.writerow(('China Youku', ':'))
-counter = 0
-for video in china1:
-  writer.writerow((video, china2[counter]))
-  counter += 1
-writer.writerow(('China TenCent', ':'))
-for line in chinaTenCents:
-  result = chinaTenCent(line)
-  writer.writerow((result))
-  time.sleep(10)
+  writer.writerow(('China Youku', ':'))
+  counter = 0
+  for video in china1:
+    writer.writerow((video, china2[counter]))
+    counter += 1
+  writer.writerow(('China TenCent', ':'))
+  for line in chinaTenCents:
+    result = chinaTenCent(line)
+    writer.writerow((result))
+    time.sleep(10)
 
-csvFile.close()
-chinaTenCents.close()
+  csvFile.close()
+  chinaTenCents.close()
+
+if __name__ == '__main__':
+  main()
