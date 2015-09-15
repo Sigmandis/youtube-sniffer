@@ -104,17 +104,7 @@ for video in china1:
   counter += 1
 writer.writerow(('China TenCent', ':'))
 for line in chinaTenCents:
-  try:
-    result = chinaTenCent(line)
-  except ConnectionResetError:
-    try:
-      result = chinaTenCent(line)
-    except ConnectionResetError:
-      print('They sank us')
-    else:
-      continue
-  else:
-    continue
+  result = chinaTenCent(line)
   writer.writerow((result))
   time.sleep(10)
 
